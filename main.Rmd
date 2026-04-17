@@ -9,8 +9,17 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+# Librarias necesarias
 
+```{r}
 ```
 
+# Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida
+# Usa una expresión regular para buscar todos los ficheros con el justificante del curso. 
+
+```{r}
+ficheros <- list.files("data", recursive = TRUE, full.names = TRUE)
+f_puntos <- ficheros[grep("puntos.*\\.txt$", ficheros, ignore.case = TRUE)]
+f_certificados <- ficheros[grep("certificate.*\\.pdf$", ficheros, ignore.case = TRUE)]
+```
 
