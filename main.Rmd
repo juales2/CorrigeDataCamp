@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Librarias necesarias
 
 ```{r}
+library(writexl)
 ```
 
 # Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida
@@ -87,6 +88,13 @@ notasRIntermedio <- data.frame(
   Puntos = contenidos_f_puntos,
   stringsAsFactors = FALSE
 )
+notasRIntermedio <- notasRIntermedio[order(notasRIntermedio$apellidos), ]
 notasRIntermedio
+```
+
+# Creación del .Xlsx  
+
+```{r}
+write_xlsx(notasRIntermedio, path = "InfoAlumnos/NotasRIntermedio.xlsx")
 ```
 
