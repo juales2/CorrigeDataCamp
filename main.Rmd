@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(writexl)
+library(readxl)
+library(dplyr)
 ```
 
 # Usa una expresión regular para buscar todos los ficheros de puntuaciones en la carpeta descomprimida
@@ -92,9 +94,30 @@ notasRIntermedio <- notasRIntermedio[order(notasRIntermedio$apellidos), ]
 notasRIntermedio
 ```
 
-# Creación del .Xlsx  
+# Creación del .Xlsx de NotasRIntermedio 
 
 ```{r}
 write_xlsx(notasRIntermedio, path = "InfoAlumnos/NotasRIntermedio.xlsx")
 ```
 
+# Creación del .xlsx de AlumnosNotas-xlsx
+
+```{r}
+alumnos_matriculados <- read_excel("InfoAlumnos/AlumnosTD25_26.xlsx")
+
+alumnos_matriculados <- alumnos_matriculados |>
+  rename(Apellidos_Original = "Apellido(s)") |> 
+  mutate(apellidos = trimws(Apellidos_Original))
+
+notasRIntermedio <- notasRIntermedio |>
+  mutate(apellidos = trimws(apellidos))
+
+alumnos_notas_final <- alumnos_matriculados |>
+  left_join(notasRIntermedio, by = "apellidos")
+
+alumnos_notas_final <- alumnos_notas_final |>
+  select(-Apellidos_Original) |>
+  rename(Apellidos = apellidos)
+
+write_xlsx(alumnos_notas_final, "InfoAlumnos/AlumnosNotas.xlsx")
+```
