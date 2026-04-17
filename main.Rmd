@@ -19,7 +19,58 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 ficheros <- list.files("data", recursive = TRUE, full.names = TRUE)
-f_puntos <- ficheros[grep("puntos.*\\.txt$", ficheros, ignore.case = TRUE)]
-f_certificados <- ficheros[grep("certificate.*\\.pdf$", ficheros, ignore.case = TRUE)]
+fs_puntos <- ficheros[grep("puntos.*\\.txt$", ficheros, ignore.case = TRUE)]
+fs_certificados <- ficheros[grep("certificate.*\\.pdf$", ficheros, ignore.case = TRUE)]
+```
+
+# Data frame 
+
+```{r}
+carpetas <- list.dirs("data", recursive = FALSE)
+apellidos = c()
+puntos <- c()
+noms_f_puntos <- c()
+
+for (carpeta in carpetas) {
+  partes_ruta <- unlist(strsplit(carpeta, "/"))
+  carpeta_alumno <- partes_ruta[2]
+  
+  nombre_completo <- unlist(strsplit(carpeta_alumno, "_"))[1]
+  
+  partes_nombre <- unlist(strsplit(nombre_completo, ","))
+  apellido_sucio <- partes_nombre[1]
+  
+  apellidos <- c(apellidos, apellido_sucio)
+  
+  f_alumno <- list.files(carpeta, full.names = TRUE)
+  f_puntos <- f_alumno[grep("puntos.*\\.txt$", f_alumno, ignore.case = TRUE)]
+  
+  if (length(f_puntos) == 1) {
+    nom_f_puntos <- basename(f_puntos[1])
+    noms_f_puntos <- c(noms_f_puntos, nom_f_puntos)
+    
+    linea_puntos <- readLines(f_puntos[1], warn = FALSE)
+    
+    if (length(linea_puntos) == 1) {
+      valor <- as.numeric(gsub("[^0-9]", "", linea_puntos[1]))
+      
+      if (is.na(valor)) {
+        puntos <- c(puntos, 0)
+      } else {
+        puntos <- c(puntos, valor)
+      }
+    } else {
+      puntos <- c(puntos, 0)
+    }
+    
+  } else {
+    puntos <- c(puntos, 0)
+    noms_f_puntos <- c(noms_f_puntos, "NA")
+  }
+}
+
+apellidos
+puntos
+noms_f_puntos # Los archivos que no tienen el nombre nada bien (Score2.pdf) no se pueden contar.
 ```
 
