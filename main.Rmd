@@ -30,6 +30,7 @@ carpetas <- list.dirs("data", recursive = FALSE)
 apellidos = c()
 puntos <- c()
 noms_f_puntos <- c()
+contenidos_f_puntos <- c()
 
 for (carpeta in carpetas) {
   partes_ruta <- unlist(strsplit(carpeta, "/"))
@@ -51,7 +52,10 @@ for (carpeta in carpetas) {
     
     linea_puntos <- readLines(f_puntos[1], warn = FALSE)
     
-    if (length(linea_puntos) == 1) {
+    texto_completo <- paste(linea_puntos, collapse = " ")
+    contenidos_f_puntos <- c(contenidos_f_puntos, texto_completo)
+    
+    if (length(linea_puntos) >= 1) {
       valor <- as.numeric(gsub("[^0-9]", "", linea_puntos[1]))
       
       if (is.na(valor)) {
@@ -66,11 +70,23 @@ for (carpeta in carpetas) {
   } else {
     puntos <- c(puntos, 0)
     noms_f_puntos <- c(noms_f_puntos, "NA")
+    contenidos_f_puntos <- c(contenidos_f_puntos, "Fichero no encontrado")
   }
 }
 
+# Los archivos que no tienen el nombre nada bien (Score2.pdf) no se pueden encontrar.
 apellidos
 puntos
-noms_f_puntos # Los archivos que no tienen el nombre nada bien (Score2.pdf) no se pueden contar.
+noms_f_puntos
+contenidos_f_puntos
+
+notasRIntermedio <- data.frame(
+  apellidos = apellidos,
+  puntos = puntos,
+  NomFile = noms_f_puntos,
+  Puntos = contenidos_f_puntos,
+  stringsAsFactors = FALSE
+)
+notasRIntermedio
 ```
 
